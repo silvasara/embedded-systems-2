@@ -1,0 +1,3 @@
+[submodule "distributed-server/lib/bme280"]
+	path = distributed-server/lib/bme280
+	url = https://github.com/bitbank2/bme280.git
