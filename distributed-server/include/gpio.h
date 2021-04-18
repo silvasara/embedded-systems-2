@@ -1,5 +1,6 @@
 #include <wiringPi.h>
 #include <softPwm.h>
+#include <stdio.h>
 
 
 // output devices
@@ -22,3 +23,4 @@
 
 void enable_gpio();
 void disable_gpio();
+void gpio();
