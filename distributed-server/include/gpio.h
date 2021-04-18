@@ -21,6 +21,26 @@
 #define OPENING_SENSOR_5 28  // room1's door
 #define OPENING_SENSOR_6 29  // room1's window
 
+struct gpio_out{
+    int lamp_1;
+    int lamp_2;
+    int lamp_3;
+    int lamp_4;
+    int air_cond_1;
+    int air_cond_2;
+} typedef gpio_out;
+
+struct gpio_in{
+    int presence_sensor_1;
+    int presence_sensor_2;
+    int opening_sensor_1;
+    int opening_sensor_2;
+    int opening_sensor_3;
+    int opening_sensor_4;
+    int opening_sensor_5;
+    int opening_sensor_6;
+} typedef gpio_in;
+
 void enable_gpio();
 void disable_gpio();
 void gpio();
