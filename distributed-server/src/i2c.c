@@ -4,15 +4,11 @@ void init_i2c(){
     bme280Init(1, BME_ADDR);
 }
 
-temp_humidity get_temperature_humidity(){
+void get_temperature_humidity(temp_humidity *th){
     int temperature, pressure, humidity;
 
     bme280ReadValues(&temperature, &pressure, &humidity);
 
-    temp_humidity th;
-
-    th.temperature = temperature/100;
-    th.humidity = humidity/100;
-
-    return th;
+    th->temperature = temperature/100;
+    th->humidity = humidity/100;
 }

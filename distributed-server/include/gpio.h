@@ -1,3 +1,6 @@
+#ifndef _GPIO_H_
+#define _GPIO_H_ 
+
 #include <wiringPi.h>
 #include <softPwm.h>
 #include <stdio.h>
@@ -21,16 +24,16 @@
 #define OPENING_SENSOR_5 28  // room1's door
 #define OPENING_SENSOR_6 29  // room1's window
 
-struct gpio_out{
+typedef struct gpio_out{
     int lamp_1;
     int lamp_2;
     int lamp_3;
     int lamp_4;
     int air_cond_1;
     int air_cond_2;
-} typedef gpio_out;
+} gpio_out;
 
-struct gpio_in{
+typedef struct gpio_in{
     int presence_sensor_1;
     int presence_sensor_2;
     int opening_sensor_1;
@@ -39,8 +42,11 @@ struct gpio_in{
     int opening_sensor_4;
     int opening_sensor_5;
     int opening_sensor_6;
-} typedef gpio_in;
+} gpio_in;
 
 void enable_gpio();
 void disable_gpio();
+void get_gpio_states(gpio_out *devices, gpio_in *sensors);
 void gpio();
+
+#endif // _GPIO_H_

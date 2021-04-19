@@ -1,6 +1,6 @@
 #include "serializer.h"
 
-void make_json(states *devices_states){
+char *make_json(data *server){
     char *json = (char*) malloc(400*sizeof(char));
 
     sprintf(
@@ -23,22 +23,22 @@ void make_json(states *devices_states){
             "\"temperature\": %.2f,"
             "\"humidity\": %.2f,"
         "}",
+        server->devices->lamp_1,
+        server->devices->lamp_2,
+        server->devices->lamp_3,
+        server->devices->lamp_4,
+        server->devices->air_cond_1,
+        server->devices->air_cond_2,
+        server->sensors->presence_sensor_1,
+        server->sensors->presence_sensor_2,
+        server->sensors->opening_sensor_1,
+        server->sensors->opening_sensor_2,
+        server->sensors->opening_sensor_3,
+        server->sensors->opening_sensor_4,
+        server->sensors->opening_sensor_5,
+        server->sensors->opening_sensor_6,
+        server->th->temperature,
+        server->th->humidity);
 
-        devices_states->devices.lamp_1,
-        devices_states->devices.lamp_2,
-        devices_states->devices.lamp_3,
-        devices_states->devices.lamp_4,
-        devices_states->devices.air_cond_1,
-        devices_states->devices.air_cond_2,
-        devices_states->sensors.presence_sensor_1,
-        devices_states->sensors.presence_sensor_2,
-        devices_states->sensors.opening_sensor_1,
-        devices_states->sensors.opening_sensor_2,
-        devices_states->sensors.opening_sensor_3,
-        devices_states->sensors.opening_sensor_4,
-        devices_states->sensors.opening_sensor_5,
-        devices_states->sensors.opening_sensor_6,
-        devices_states->th.temperature,
-        devices_states->th.humidity
-    );
+    return json;
 }

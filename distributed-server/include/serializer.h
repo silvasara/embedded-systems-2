@@ -1,10 +1,18 @@
+#ifndef _SERIALIZER_H_ 
+#define _SERIALIZER_H_ 
+
+#include "i2c.h"
+#include "gpio.h"
 #include <stdlib.h>
 
-struct states {
-    int socket_;
-    temp_humidity th;
-    gpio_out devices;
-    gpio_in sensors;
-} typedef states;
+typedef struct data {
+	int send_socket;	
+	int recv_socket;	
+    temp_humidity *th;
+    gpio_out *devices;
+    gpio_in *sensors;
+} data;
 
-void make_json(states *devices_states);
+char *make_json(data *devices_states);
+
+#endif // _SERIALIZER_H_

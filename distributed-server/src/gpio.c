@@ -51,3 +51,20 @@ void gpio(int pin, int mode){
     }
 }
 
+void get_gpio_states(gpio_out *devices, gpio_in *sensors){
+   devices->lamp_1 = digitalRead(LAMP_1);
+   devices->lamp_2 = digitalRead(LAMP_2);
+   devices->lamp_3 = digitalRead(LAMP_3);
+   devices->lamp_4 = digitalRead(LAMP_4);
+   devices->air_cond_1 = digitalRead(AIR_COND_1);
+   devices->air_cond_2 = digitalRead(AIR_COND_2);
+
+   sensors->presence_sensor_1 = digitalRead(PRESENCE_SENSOR_1);
+   sensors->presence_sensor_2 = digitalRead(PRESENCE_SENSOR_2);
+   sensors->opening_sensor_1 = digitalRead(OPENING_SENSOR_1);
+   sensors->opening_sensor_2 = digitalRead(OPENING_SENSOR_2);
+   sensors->opening_sensor_3 = digitalRead(OPENING_SENSOR_3);
+   sensors->opening_sensor_4 = digitalRead(OPENING_SENSOR_4);
+   sensors->opening_sensor_5 = digitalRead(OPENING_SENSOR_5);
+   sensors->opening_sensor_6 = digitalRead(OPENING_SENSOR_6);
+}
