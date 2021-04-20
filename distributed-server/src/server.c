@@ -43,25 +43,27 @@ int config_receiver(data *server){
 
 int config_sender(data *server){
     int socket_ = 0;
-    struct sockaddr_in server_addr;
+    struct sockaddr_in client_addr;
 
-    if ((socket_ = socket(AF_INET, SOCK_STREAM, 0)) < 0){
-        printf("Socket creation error \n");
+    if ((socket_ = socket(AF_INET, SOCK_STREAM, IPPROTO_TCP)) < 0){
+        perror("Client socket creation error");
         return -1;
     }
 
-    server_addr.sin_family = AF_INET;
-    server_addr.sin_addr.s_addr = inet_addr(CENTRAL_HOST);
-    server_addr.sin_port = htons(CENTRAL_PORT);
+    client_addr.sin_family = AF_INET;
+    client_addr.sin_addr.s_addr = inet_addr(CENTRAL_HOST);
+    client_addr.sin_port = htons(CENTRAL_PORT);
 
-    if(inet_pton(AF_INET, CENTRAL_HOST, &server_addr.sin_addr)<=0){
-        printf("Invalid address/ Address not supported\n");
+    if(inet_pton(AF_INET, CENTRAL_HOST, &client_addr.sin_addr)<=0){
+        perror("Invalid address/ Address not supported");
         return -1;
     }
 
-    while(connect(socket_, (struct sockaddr *)&server_addr, sizeof(server_addr)) < 0){
-        printf("Connection Failed. Trying again... \n");
+    while(connect(socket_, (struct sockaddr *)&client_addr, sizeof(client_addr)) < 0){
+        perror("Connection Failed. Trying again");
     }
+
+    printf("Connected successfully!\n");
 
     server->send_socket = socket_;
     return 0;

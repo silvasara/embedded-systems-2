@@ -88,6 +88,10 @@ int main(){
     gpio_out *devices = malloc(sizeof(gpio_out));
     gpio_in *sensors = malloc(sizeof(gpio_in));
 
+//    if(config_receiver(server) == -1){
+//        exit(1);
+//    }
+
     if(config_sender(server) == -1){
         exit(1);
     }

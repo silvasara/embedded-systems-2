@@ -2,8 +2,10 @@
 #define _I2C_H_ 
 
 #include "bme280.h"
-#define BME_ADDR 0x76
+#include <stdlib.h>
+#include <stdio.h>
 
+#define BME_ADDR 0x76
 
 typedef struct temp_hum{
 	float temperature;
