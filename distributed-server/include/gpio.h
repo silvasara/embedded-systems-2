@@ -21,8 +21,8 @@
 #define OPENING_SENSOR_2 22  // kitchen's window
 #define OPENING_SENSOR_3 26  // living room's door
 #define OPENING_SENSOR_4 27  // living room's window
-#define OPENING_SENSOR_5 28  // room1's door
-#define OPENING_SENSOR_6 29  // room1's window
+#define OPENING_SENSOR_5 28  // room1's window
+#define OPENING_SENSOR_6 29  // room2's window
 
 typedef struct gpio_out{
     int lamp_1;

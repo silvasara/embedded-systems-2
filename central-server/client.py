@@ -3,6 +3,8 @@ import time
 import json
 import socket
 
+from log_csv import write_rows
+
 
 CENTRAL_HOST = '192.168.0.53'
 DISTRIBUTED_HOST = '192.168.0.4'
@@ -20,7 +22,8 @@ def sender(socket_):
         if command == 'quit':
             os.kill(os.getpid(), signal.SIGINT)
 
-def receiver(socket_):
+
+def receiver(socket_, writer):
     socket_ = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
     socket_.bind((CENTRAL_HOST, CENTRAL_PORT))
     socket_.listen()
@@ -30,6 +33,7 @@ def receiver(socket_):
         data = conn.recv(1024)
         if data:
             data = json.loads(data)
+            write_rows(writer, data)
             print(data)
         else:
             break
