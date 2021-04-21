@@ -14,24 +14,20 @@ pthread_mutex_t bme280_mutex, sensors_mutex, send_mutex;
 pthread_cond_t bme280_cond, sensors_cond, send_cond;
 
 volatile int run = 1,
-			 read_bme280 = 0,
-			 read_sensors = 0,
-			 run_sender = 0,
-			 th_counter = 0,
-			 sender_counter = 0;
+         read_bme280 = 0,
+         read_sensors = 0,
+         run_sender = 0,
+         th_counter = 0,
+         sender_counter = 0;
 
 
 void *send_data(void* args){
     pthread_mutex_lock(&send_mutex);
-    fprintf(stderr, "lalala\n");
 
     while(!run_sender && run){
-        fprintf(stderr, "lalala2\n");
         pthread_cond_wait(&send_cond, &send_mutex);
-        fprintf(stderr, "lalala3\n");
 
         if(sender_counter == 5){
-            fprintf(stderr, "lalala4\n");
             data *server = (data*) args;
             char *payload = (char*) malloc(400*sizeof(char));
 
@@ -50,6 +46,24 @@ void *send_data(void* args){
     pthread_exit( NULL );
 }
 
+void *receive_commands(void *args){
+    data *server = (data*) args;
+
+    while(1){
+        char buffer[1024] = {0};
+        int data = recv(server->recv_socket, buffer, 1024, 0);
+
+        if(data == 0){
+            exit(0);
+        }
+
+        char device[20];
+        sscanf(buffer, "{\"Device\": \"%[^\"}]\"}", device);
+
+        switch_state(buffer, server->devices);
+    }
+}
+
 void *get_states(void *args){
     pthread_mutex_lock(&sensors_mutex);
 
@@ -65,6 +79,25 @@ void *get_states(void *args){
     pthread_exit( NULL );
 }
 
+void *get_temp_hum(void* args){
+    pthread_mutex_lock(&bme280_mutex);
+
+    while(!read_bme280 && run){
+        pthread_cond_wait(&bme280_cond, &bme280_mutex);
+
+        if(th_counter == 5){
+            data *server = (data*) args;
+            get_temperature_humidity(server->th);
+            th_counter = 0;
+        }
+
+        read_bme280 = 0;
+        th_counter++;
+    }
+
+    pthread_mutex_unlock(&bme280_mutex);
+    pthread_exit( NULL );
+}
 
 void sig_handler(int signum) {
     if(signum == SIGALRM){
@@ -89,33 +122,13 @@ void sig_handler(int signum) {
         }
         pthread_mutex_unlock(&sensors_mutex);
 
-        ualarm(2e5, 2e5);
+        ualarm(1e5, 1e5);
     }
 
     if(signum == SIGINT){
         run = 0;
+        disable_gpio();
     }
-}
-
-
-void *get_temp_hum(void* args){
-    pthread_mutex_lock(&bme280_mutex);
-
-    while(!read_bme280 && run){
-        pthread_cond_wait(&bme280_cond, &bme280_mutex);
-
-        if(th_counter == 5){
-            data *server = (data*) args;
-            get_temperature_humidity(server->th);
-            th_counter = 0;
-        }
-
-        read_bme280 = 0;
-        th_counter++;
-    }
-
-    pthread_mutex_unlock(&bme280_mutex);
-    pthread_exit( NULL );
 }
 
 int main(){
@@ -124,9 +137,9 @@ int main(){
     gpio_out *devices = malloc(sizeof(gpio_out));
     gpio_in *sensors = malloc(sizeof(gpio_in));
 
-//    if(config_receiver(server) == -1){
-//        exit(1);
-//    }
+    if(config_receiver(server) == -1){
+        exit(1);
+    }
 
     if(config_sender(server) == -1){
         exit(1);
@@ -136,12 +149,12 @@ int main(){
     server->devices = devices;
     server->sensors = sensors;
 
-	init_i2c();
-	enable_gpio();
+    init_i2c();
+    enable_gpio();
 
     signal(SIGALRM, sig_handler);
     signal(SIGINT, sig_handler);
-    ualarm(2e5, 2e5);
+    ualarm(1e5, 1e5);
 
     pthread_mutex_init(&bme280_mutex, NULL);
     pthread_mutex_init(&send_mutex, NULL);
@@ -151,10 +164,11 @@ int main(){
     pthread_cond_init(&send_cond, NULL);
     pthread_cond_init(&sensors_cond, NULL);
 
-    pthread_t threads[3];
+    pthread_t threads[4];
     pthread_create(&threads[0], NULL, send_data, (void *)server);
     pthread_create(&threads[1], NULL, get_temp_hum, (void *)server);
     pthread_create(&threads[2], NULL, get_states, (void *)server);
+    pthread_create(&threads[3], NULL, receive_commands, (void *)server);
 
     while(run){}
 
@@ -168,7 +182,7 @@ int main(){
 
     close(server->send_socket);
     close(server->recv_socket);
-	disable_gpio();
+    disable_gpio();
 
     return 0;
 }

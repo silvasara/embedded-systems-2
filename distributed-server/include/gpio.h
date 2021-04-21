@@ -48,5 +48,6 @@ void enable_gpio();
 void disable_gpio();
 void get_gpio_states(gpio_out *devices, gpio_in *sensors);
 void gpio();
+void switch_state(char *pin, struct gpio_out *device);
 
 #endif // _GPIO_H_

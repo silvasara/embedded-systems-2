@@ -68,3 +68,41 @@ void get_gpio_states(gpio_out *devices, gpio_in *sensors){
    sensors->opening_sensor_5 = digitalRead(OPENING_SENSOR_5);
    sensors->opening_sensor_6 = digitalRead(OPENING_SENSOR_6);
 }
+
+
+void switch_state(char *pin, struct gpio_out *device){
+    int state = 0;
+    int gpio_pin = 0;
+    
+    if(strcmp(pin, "lamp_1") == 0){
+            gpio_pin = LAMP_1;
+            state = digitalRead(gpio_pin);
+    }
+    else if(strcmp(pin, "lamp_2") == 0){
+            gpio_pin = LAMP_2;
+            state = digitalRead(gpio_pin);
+    }
+    else if(strcmp(pin, "lamp_3") == 0){
+            gpio_pin = LAMP_3;
+            state = digitalRead(gpio_pin);
+    }
+    else if(strcmp(pin, "lamp_4") == 0){
+            gpio_pin = LAMP_4;
+            state = digitalRead(gpio_pin);
+    }
+    else if(strcmp(pin, "air_cond_1") == 0){
+            gpio_pin = AIR_COND_1;
+            state = digitalRead(gpio_pin);
+    }
+    else if(strcmp(pin, "air_cond_2") == 0){
+            gpio_pin = AIR_COND_2;
+            state = digitalRead(gpio_pin);
+    }
+
+    if(state){
+        turn_off_device(gpio_pin);
+    }
+    else{
+        turn_on_device(gpio_pin);
+    }
+}

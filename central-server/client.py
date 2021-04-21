@@ -16,10 +16,14 @@ def sender(socket_):
     while socket_.connect_ex((DISTRIBUTED_HOST, DISTRIBUTED_PORT)) != 0:
         print("Connecting to the distributed server...")
         time.sleep(1)
+
+    print("Connected successfully!")
     while True:
+        print("escolha um opção")
         command = input()
+        print(command)
         socket_.sendall(bytes(command, 'utf-8'))
-        if command == 'quit':
+        if command == "quit":
             os.kill(os.getpid(), signal.SIGINT)
 
 
@@ -33,7 +37,7 @@ def receiver(socket_, writer):
         data = conn.recv(1024)
         if data:
             data = json.loads(data)
-            write_rows(writer, data)
             print(data)
+            write_rows(writer, data)
         else:
             break
