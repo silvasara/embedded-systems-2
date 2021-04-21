@@ -23,11 +23,15 @@ volatile int run = 1,
 
 void *send_data(void* args){
     pthread_mutex_lock(&send_mutex);
+    fprintf(stderr, "lalala\n");
 
     while(!run_sender && run){
+        fprintf(stderr, "lalala2\n");
         pthread_cond_wait(&send_cond, &send_mutex);
+        fprintf(stderr, "lalala3\n");
 
         if(sender_counter == 5){
+            fprintf(stderr, "lalala4\n");
             data *server = (data*) args;
             char *payload = (char*) malloc(400*sizeof(char));
 
@@ -59,6 +63,38 @@ void *get_states(void *args){
     }
     pthread_mutex_unlock(&sensors_mutex);
     pthread_exit( NULL );
+}
+
+
+void sig_handler(int signum) {
+    if(signum == SIGALRM){
+        pthread_mutex_lock(&bme280_mutex);
+        if(read_bme280 == 0){
+            read_bme280 = 1;
+            pthread_cond_signal(&bme280_cond);
+        }
+        pthread_mutex_unlock(&bme280_mutex);
+
+        pthread_mutex_lock(&send_mutex);
+        if(run_sender == 0){
+            run_sender = 1;
+            pthread_cond_signal(&send_cond);
+        }
+        pthread_mutex_unlock(&send_mutex);
+
+        pthread_mutex_lock(&sensors_mutex);
+        if(read_sensors == 0){
+            read_sensors = 1;
+            pthread_cond_signal(&sensors_cond);
+        }
+        pthread_mutex_unlock(&sensors_mutex);
+
+        ualarm(2e5, 2e5);
+    }
+
+    if(signum == SIGINT){
+        run = 0;
+    }
 }
 
 
@@ -102,6 +138,10 @@ int main(){
 
 	init_i2c();
 	enable_gpio();
+
+    signal(SIGALRM, sig_handler);
+    signal(SIGINT, sig_handler);
+    ualarm(2e5, 2e5);
 
     pthread_mutex_init(&bme280_mutex, NULL);
     pthread_mutex_init(&send_mutex, NULL);

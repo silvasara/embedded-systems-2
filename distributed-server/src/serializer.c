@@ -21,7 +21,7 @@ char *make_json(data *server){
             "\"opening_sensor_5\": %d,"
             "\"opening_sensor_6\": %d,"
             "\"temperature\": %.2f,"
-            "\"humidity\": %.2f,"
+            "\"humidity\": %.2f"
         "}",
         server->devices->lamp_1,
         server->devices->lamp_2,
