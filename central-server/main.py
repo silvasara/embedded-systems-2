@@ -2,6 +2,7 @@ import sys
 import signal
 import socket
 import threading
+import os
 
 from client import sender, receiver
 from log_csv import create_csv, save_csv
@@ -12,10 +13,11 @@ recv_socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
 csv_file, writer = create_csv()
 
 
-def signal_handler(sig, frame):
+def signal_handler(sig, _):
     send_socket.close()
     save_csv(csv_file)
     recv_socket.close()
+    os.kill(os.getpid(), signal.SIGINT)
     sys.exit(0)
 
 
